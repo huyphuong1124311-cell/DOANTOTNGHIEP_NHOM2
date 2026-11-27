@@ -1,0 +1,425 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siêu Thị Online</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+        }
+
+        header {
+            background: #168b45;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header input {
+            padding: 12px;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            background: #ff9800;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #e68900;
+        }
+
+        nav {
+            background: #126c38;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 20px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .banner {
+            background: #d9f5df;
+            text-align: center;
+            padding: 60px 15px;
+        }
+
+        .banner h2 {
+            margin-bottom: 10px;
+        }
+
+        .heading {
+            text-align: center;
+            margin: 30px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .product {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+            transition: transform 0.2s;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+        }
+
+        .product img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .product h3 {
+            margin: 12px;
+        }
+
+        .price {
+            color: red;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .cart {
+            background: white;
+            margin: 25px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        .cart h2 {
+            margin-bottom: 15px;
+        }
+
+        .cart-item {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .cart-item h3 {
+            margin-bottom: 10px;
+        }
+
+        .cart-item p {
+            margin: 8px 0;
+        }
+
+        .cart-item button {
+            margin: 5px;
+        }
+
+        .cart-item span {
+            display: inline-block;
+            min-width: 25px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .cart h3 {
+            margin: 15px 0;
+        }
+
+        footer {
+            background: #168b45;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        footer p {
+            margin: 8px 0;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+            }
+
+            header input {
+                width: 100%;
+            }
+
+            nav a {
+                margin: 8px;
+            }
+
+            .cart {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .products {
+                padding: 10px;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>🛒 SIÊU THỊ ONLINE</h1>
+
+        <input type="text" id="search"
+            placeholder="Tìm kiếm sản phẩm..."
+            oninput="searchProduct()">
+
+        <button onclick="showCart()">
+            Giỏ hàng (<span id="count">0</span>)
+        </button>
+    </header>
+
+    <nav>
+        <a href="#">Trang chủ</a>
+        <a href="#products">Sản phẩm</a>
+        <a href="#contact">Liên hệ</a>
+    </nav>
+
+    <section class="banner">
+        <h2>Chào mừng đến với siêu thị online</h2>
+        <p>Mua sắm tiện lợi - Giá cả hợp lý</p>
+    </section>
+
+    <h2 class="heading" id="products">
+        DANH SÁCH SẢN PHẨM
+    </h2>
+
+    <div class="products" id="productList"></div>
+
+    <section class="cart">
+        <h2>Giỏ hàng của bạn</h2>
+
+        <div id="cartItems"></div>
+
+        <h3>Tổng tiền: <span id="total">0đ</span></h3>
+
+        <button onclick="checkout()">Đặt hàng</button>
+    </section>
+
+    <footer id="contact">
+        <h3>SIÊU THỊ ONLINE</h3>
+        <p>Địa chỉ: Hà Nội</p>
+        <p>Hotline: 0123456789</p>
+        <p>© 2026 Siêu thị Online</p>
+    </footer>
+
+    <script>
+        const products = [
+            {id: 1, name: "Rau cải xanh", price: 15000, image: "ảnh/rau cải.jpg"},
+            {id: 2, name: "Thịt lợn", price: 120000, image: "ảnh/thịt lợn.jpg"},
+            {id: 3, name: "Sữa tươi", price: 30000, image: "ảnh/sữa.jpg"},
+            {id: 4, name: "Bánh quy", price: 25000, image: "ảnh/bánh quy.jpg"},
+            {id: 5, name: "Nước ngọt", price: 12000, image: "ảnh/nước ngọt.jpg"},
+            {id: 6, name: "Trứng gà", price: 3500, image: "ảnh/trứng.jpg"}
+        ];
+
+        let cart = [];
+
+        // Hiển thị danh sách sản phẩm
+        function displayProducts(data = products) {
+            const list = document.getElementById("productList");
+            list.innerHTML = "";
+
+            if (data.length === 0) {
+                list.innerHTML = "<p>Không tìm thấy sản phẩm!</p>";
+                return;
+            }
+
+            data.forEach(p => {
+                list.innerHTML += `
+                    <div class="product">
+                        <img src="${p.image}" alt="${p.name}">
+                        <h3>${p.name}</h3>
+                        <p class="price">
+                            ${p.price.toLocaleString("vi-VN")}đ
+                        </p>
+                        <button onclick="addCart(${p.id})">
+                            Thêm vào giỏ
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        // Thêm sản phẩm vào giỏ hàng
+        function addCart(id) {
+            const product = products.find(p => p.id === id);
+
+            if (!product) return;
+
+            const item = cart.find(p => p.id === id);
+
+            if (item) {
+                item.quantity++;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+
+            updateCart();
+        }
+
+        // Cập nhật giỏ hàng
+        function updateCart() {
+            const cartItems = document.getElementById("cartItems");
+
+            let total = 0;
+            let count = 0;
+
+            cartItems.innerHTML = "";
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = "<p>Giỏ hàng đang trống!</p>";
+            }
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+
+                total += itemTotal;
+                count += item.quantity;
+
+                cartItems.innerHTML += `
+                    <div class="cart-item">
+                        <h3>${item.name}</h3>
+
+                        <p>
+                            Giá: ${item.price.toLocaleString("vi-VN")}đ
+                        </p>
+
+                        <button onclick="changeQty(${item.id}, -1)">-</button>
+
+                        <span>${item.quantity}</span>
+
+                        <button onclick="changeQty(${item.id}, 1)">+</button>
+
+                        <p>
+                            Thành tiền:
+                            ${itemTotal.toLocaleString("vi-VN")}đ
+                        </p>
+
+                        <button onclick="removeCart(${item.id})">
+                            Xóa sản phẩm
+                        </button>
+                    </div>
+                `;
+            });
+
+            document.getElementById("total").innerText =
+                total.toLocaleString("vi-VN") + "đ";
+
+            document.getElementById("count").innerText = count;
+        }
+
+        // Tăng hoặc giảm số lượng
+        function changeQty(id, amount) {
+            const item = cart.find(p => p.id === id);
+
+            if (!item) return;
+
+            item.quantity += amount;
+
+            if (item.quantity <= 0) {
+                removeCart(id);
+            } else {
+                updateCart();
+            }
+        }
+
+        // Xóa sản phẩm khỏi giỏ hàng
+        function removeCart(id) {
+            cart = cart.filter(p => p.id !== id);
+            updateCart();
+        }
+
+        // Tìm kiếm sản phẩm
+        function searchProduct() {
+            const keyword = document.getElementById("search")
+                .value.toLowerCase().trim();
+
+            const result = products.filter(p =>
+                p.name.toLowerCase().includes(keyword)
+            );
+
+            displayProducts(result);
+        }
+
+        // Cuộn đến giỏ hàng
+        function showCart() {
+            document.querySelector(".cart").scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+
+        // Đặt hàng
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Giỏ hàng đang trống!");
+                return;
+            }
+
+            const name = prompt("Nhập họ tên khách hàng:");
+
+            if (!name || !name.trim()) return;
+
+            const phone = prompt("Nhập số điện thoại:");
+
+            if (!phone || !phone.trim()) return;
+
+            alert(
+                "Đặt hàng thành công!\n" +
+                "Khách hàng: " + name.trim() +
+                "\nSố điện thoại: " + phone.trim()
+            );
+
+            cart = [];
+            updateCart();
+        }
+
+        // Khởi chạy website
+        displayProducts();
+        updateCart();
+    </script>
+
+</body>
+</html>
